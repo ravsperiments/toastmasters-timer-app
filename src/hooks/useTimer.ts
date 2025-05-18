@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { TimerConfig, TimerController, TimerRuntimeState } from '../types/timerTypes';
+import { TimerConfig, TimerController } from '../types/timerTypes';
 import { getCurrentSeverity } from '../utils/getCurrentSeverity';
-import { Logger, ConsoleLogger } from '../logger/ConsoleLogger';
+import { Logger } from '../logger/Logger';
+import { ConsoleLogger } from '../logger/ConsoleLogger';
 
 export function useTimer(config: TimerConfig, logger: Logger = ConsoleLogger): TimerController {
   const [isRunning, setIsRunning] = useState(false);
@@ -47,7 +48,7 @@ export function useTimer(config: TimerConfig, logger: Logger = ConsoleLogger): T
     setElapsedSeconds(0);
     setIsRunning(false);
     setLastSeverity('gray');
-    logger.event('reset');
+    logger.event('reset', { elapsed: elapsedSeconds, name: config.name });
   };
 
   const currentSeverity = getCurrentSeverity(config.warnings, elapsedSeconds);
@@ -61,6 +62,9 @@ export function useTimer(config: TimerConfig, logger: Logger = ConsoleLogger): T
 
   useEffect(() => {
     return () => {
+      if (isRunning) {
+        logger.event('interrupted', { elapsed: elapsedSeconds, reason: 'unmount' });
+      }
       clearInterval(intervalRef.current!);
     };
   }, []);
