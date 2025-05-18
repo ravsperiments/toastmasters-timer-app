@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 import { TimerConfig } from './src/types/timerTypes';
 import { useTimer } from './src/hooks/useTimer';
+import { COLORS, FONTS, SPACING } from './src/styles/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-// Sample config: Evaluation Speech (2–3 min)
+
 const evaluationTimer: TimerConfig = {
   name: 'Evaluation',
   duration: 180, // 3 minutes
@@ -18,18 +21,63 @@ const evaluationTimer: TimerConfig = {
   sound: false,
 };
 
+const radius = 100;
+const strokeWidth = 10;
+const circumference = 2 * Math.PI * radius;
+
+const getColor = (severity: string) => {
+  switch (severity) {
+    case 'green': return COLORS.green;
+    case 'yellow': return COLORS.yellow;
+    case 'red': return COLORS.red;
+    case 'black': return COLORS.black;
+    default: return COLORS.gray;
+  }
+};
+
+const formatTime = (s: number) => {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+};
+
 export default function App() {
   const { state, toggle, reset } = useTimer(evaluationTimer);
-
-  const formatTime = (s: number) => {
-    const m = Math.floor(s / 60);
-    const sec = s % 60;
-    return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-  };
+  const progress = Math.min(state.elapsedSeconds / evaluationTimer.duration, 1);
+  const strokeDashoffset = circumference * (1 - progress);
+  const fillColor = getColor(state.currentSeverity);
 
   return (
-    <View style={[styles.container, { backgroundColor: state.currentSeverity }]}>
-      <Text style={styles.timer}>{formatTime(state.elapsedSeconds)}</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Toastmasters Timer</Text>
+
+      <View style={styles.timerWrapper}>
+        <Svg height={2 * (radius + strokeWidth)} width={2 * (radius + strokeWidth)}>
+          <Circle
+            stroke={COLORS.timerRing}
+            fill="none"
+            cx={radius + strokeWidth}
+            cy={radius + strokeWidth}
+            r={radius}
+            strokeWidth={strokeWidth}
+          />
+          <Circle
+            stroke={fillColor}
+            fill="none"
+            cx={radius + strokeWidth}
+            cy={radius + strokeWidth}
+            r={radius}
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${circumference} ${circumference}`}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            rotation="-90"
+            originX={radius + strokeWidth}
+            originY={radius + strokeWidth}
+          />
+        </Svg>
+        <Text style={styles.timeText}>{formatTime(state.elapsedSeconds)}</Text>
+      </View>
 
       <View style={styles.controls}>
         <Button title={state.isRunning ? 'Pause' : 'Start'} onPress={toggle} />
@@ -37,7 +85,7 @@ export default function App() {
       </View>
 
       <Text style={styles.meta}>
-        Duration: 2:30 • Green: 1:00 • Yellow: 1:30 • Red: 2:00
+        {evaluationTimer.name} • Max: {formatTime(evaluationTimer.duration)}
       </Text>
     </View>
   );
@@ -46,23 +94,41 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    paddingTop: SPACING.outer,
+    backgroundColor: COLORS.background,
+  },
+  title: {
+    fontSize: FONTS.title,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.between,
+  },
+  timerWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    marginBottom: SPACING.between * 2,
   },
-  timer: {
-    fontSize: 72,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 32,
+  timeText: {
+    position: 'absolute',
+    fontSize: FONTS.timer,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
   },
   controls: {
     flexDirection: 'row',
-    gap: 20,
+    gap: SPACING.between,
   },
   meta: {
-    marginTop: 40,
+    marginTop: SPACING.between * 2,
     fontSize: 14,
-    color: '#eee',
+    color: COLORS.textSecondary,
   },
+
+  title: {
+    fontSize: FONTS.title,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.between,
+    marginTop: SPACING.between * 2, // Add this line
+  },
+  
 });
