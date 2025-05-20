@@ -58,18 +58,23 @@ describe('useTimer', () => {
 
   it('resets and logs reset', () => {
     const { result } = renderHook(() => useTimer(config, mockLogger));
-
+  
     act(() => {
-      result.current.toggle();
-      jest.advanceTimersByTime(4000);
-      result.current.reset();
+      result.current.toggle(); // start
     });
-
+  
+    act(() => {
+      jest.advanceTimersByTime(3900);     // ⏱ simulate 4 seconds
+      jest.runOnlyPendingTimers();        // ✅ flush any timer callbacks
+      result.current.reset();             // 🔁 now safely call reset
+    });
+  
     expect(result.current.state.elapsedSeconds).toBe(0);
     expect(result.current.state.isRunning).toBe(false);
+  
     expect(mockLogger.event).toHaveBeenCalledWith('reset', {
       elapsed: 4,
       name: config.name,
     });
-  });
+  });  
 });
