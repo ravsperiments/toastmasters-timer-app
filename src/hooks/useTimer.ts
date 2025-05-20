@@ -41,6 +41,10 @@ export function useTimer(config: TimerConfig, logger: Logger = ConsoleLogger): T
   };
 
   const reset = () => {
+    const now = Date.now();
+    const elapsedAtReset = startTimestamp.current
+      ? Math.floor((now - startTimestamp.current) / 1000)
+      : 0;
     clearInterval(intervalRef.current!);
     intervalRef.current = null;
     pausedOffset.current = 0;
@@ -48,7 +52,7 @@ export function useTimer(config: TimerConfig, logger: Logger = ConsoleLogger): T
     setElapsedSeconds(0);
     setIsRunning(false);
     setLastSeverity('gray');
-    logger.event('reset', { elapsed: elapsedSeconds, name: config.name });
+    logger.event('reset', { elapsed: elapsedAtReset, name: config.name });
   };
 
   const currentSeverity = getCurrentSeverity(config.warnings, elapsedSeconds);
