@@ -30,6 +30,7 @@
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-typescript": "^7.27.1",
     "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react": "^16.3.0",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.0.10",

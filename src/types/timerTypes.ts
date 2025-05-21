@@ -26,4 +26,5 @@ export interface TimerController {
   state: TimerRuntimeState;
   toggle: () => void;
   reset: () => void;
+  pause: () => void;
 }
