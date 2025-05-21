@@ -33,7 +33,6 @@ describe('useTimer', () => {
       result.current.toggle(); // start
     });
 
-    // Simulate 5 seconds
     act(() => {
       jest.advanceTimersByTime(5000);
     });
@@ -44,37 +43,43 @@ describe('useTimer', () => {
 
   it('pauses correctly and logs pause', () => {
     const { result } = renderHook(() => useTimer(config, mockLogger));
-
+  
     act(() => {
       result.current.toggle(); // start
-      jest.advanceTimersByTime(3000);
+      jest.advanceTimersByTime(3000); // simulate 3s
       result.current.toggle(); // pause
     });
-
+  
+    // Force state updates to flush
+    act(() => {
+      // simulate time to flush the internal setState
+      jest.advanceTimersByTime(1);
+    });
+  
     expect(result.current.state.isRunning).toBe(false);
     expect(result.current.state.elapsedSeconds).toBe(3);
     expect(mockLogger.event).toHaveBeenCalledWith('pause', { elapsed: 3 });
-  });
+  });   
 
   it('resets and logs reset', () => {
     const { result } = renderHook(() => useTimer(config, mockLogger));
-  
+
     act(() => {
       result.current.toggle(); // start
     });
-  
+
     act(() => {
-      jest.advanceTimersByTime(3900);     // ⏱ simulate 4 seconds
-      jest.runOnlyPendingTimers();        // ✅ flush any timer callbacks
-      result.current.reset();             // 🔁 now safely call reset
+      jest.advanceTimersByTime(3900);     // simulate 3.9s
+      jest.runOnlyPendingTimers();        // flush 3 ticks
+      result.current.reset();             // call reset before 4th tick
     });
-  
+
     expect(result.current.state.elapsedSeconds).toBe(0);
     expect(result.current.state.isRunning).toBe(false);
-  
+
     expect(mockLogger.event).toHaveBeenCalledWith('reset', {
       elapsed: 4,
       name: config.name,
     });
-  });  
+  });
 });
