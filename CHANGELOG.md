@@ -25,4 +25,12 @@ All notable changes to this project will be documented here.
 
 ---
 
-Next up: `TEST_PLAN.md` to capture manual QA scenarios.
+## [v1.0.0] - 2025-05-26
+### Added
+- Reusable `PresetCard` component to display timer presets
+- Green | Yellow | Red threshold formatting in mm:ss on HomeScreen
+
+### Changed
+- HomeScreen layout redesigned: white cards with shadows, soft gray background
+- Replaced inline card logic with a clean visual component
+
