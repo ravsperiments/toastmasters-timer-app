@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+
+// Screen responsible for displaying the active timer and its controls.
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { useTimer } from '../hooks/useTimer';
@@ -12,6 +14,7 @@ const radius = 100;
 const strokeWidth = 10;
 const circumference = 2 * Math.PI * radius;
 
+// Map a severity string to the color defined in the theme.
 const getColor = (severity: string) => {
   switch (severity) {
     case 'green': return COLORS.green;
@@ -22,6 +25,7 @@ const getColor = (severity: string) => {
   }
 };
 
+// Convert a time in seconds to an MM:SS display string.
 const formatTime = (s: number) => {
   const m = Math.floor(s / 60);
   const sec = s % 60;
@@ -29,9 +33,12 @@ const formatTime = (s: number) => {
 };
 
 export default function TimerScreen({ route }: Props) {
+  // Timer configuration is passed via navigation parameters
   const { config } = route.params;
+  // useTimer encapsulates all timer state and control logic
   const { state, toggle, reset } = useTimer(config);
 
+  // Normalised progress between 0 and 1 for the circular progress ring.
   const progress = Math.min(state.elapsedSeconds / config.duration, 1);
   const strokeDashoffset = circumference * (1 - progress);
   const fillColor = getColor(state.currentSeverity);

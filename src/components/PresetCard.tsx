@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+
+// Small card component used on the home screen to display a timer preset.
 import { TimerConfig } from '../types/timerTypes';
 
 type Props = {
@@ -7,6 +9,7 @@ type Props = {
   onPress: () => void;
 };
 
+// Format seconds as M:SS for display on the card.
 const format = (s: number) => {
   const m = Math.floor(s / 60);
   const sec = s % 60;
@@ -14,6 +17,7 @@ const format = (s: number) => {
 };
 
 export default function PresetCard({ config, onPress }: Props) {
+  // Convert warning thresholds to human readable form for display
   const [green, yellow, red] = config.warnings.map(w => format(w.at));
 
   return (

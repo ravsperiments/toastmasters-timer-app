@@ -1,4 +1,4 @@
-// src/styles/theme.ts
+// Central place for colour, font and spacing definitions used across the app.
 export const COLORS = {
     background: '#FFFFFF',
     textPrimary: '#333333',
@@ -11,14 +11,19 @@ export const COLORS = {
     gray: '#bdc3c7',
   };
   
-  export const FONTS = {
+export const FONTS = {
+    // Large title text size
     title: 24,
+    // Digits displayed in the timer face
     timer: 48,
+    // Standard button text
     button: 16,
-  };
-  
-  export const SPACING = {
+};
+
+export const SPACING = {
+    // Padding around screen edges
     outer: 24,
+    // Margin between stacked elements
     between: 20,
-  };
+};
   
