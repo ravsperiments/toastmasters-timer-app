@@ -1,4 +1,6 @@
 import React from 'react';
+
+// Home screen showing a list of available timer presets for the user to pick.
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -12,6 +14,7 @@ export default function HomeScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Choose a Timer</Text>
+      {/* Render each preset as a selectable card */}
       <FlatList
         data={timerPresets}
         keyExtractor={(item) => item.name}

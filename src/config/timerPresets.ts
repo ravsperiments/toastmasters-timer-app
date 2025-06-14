@@ -1,5 +1,7 @@
 import { TimerConfig } from '../types/timerTypes';
 
+// Commonly used timer configurations shipped with the application.
+
 export const timerPresets: TimerConfig[] = [
   {
     name: 'Evaluation',
